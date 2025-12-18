@@ -30,14 +30,24 @@ signals:
     void toggleSignPressed();
     void percentPressed();
 private:
+    void buildUi();
+    void connectSignals();
+    QPushButton* makeButton(const QString& btnName);
+private:
     QLineEdit* m_display = nullptr;
 
     QVector<QPushButton*> m_digitsBtns;
-    QVector<QPushButton*> m_operandBtns;
 
     QPushButton* m_btnCE = nullptr; //CE
     QPushButton* m_btnPM = nullptr; // +/-
     QPushButton* m_btnPercent = nullptr;
     QPushButton* m_btnEqual = nullptr;
+
+    QPushButton* m_btnDiv = nullptr;
+    QPushButton* m_btnMul = nullptr;
+    QPushButton* m_btnSub = nullptr;
+    QPushButton* m_btnAdd = nullptr;
+
+    QPushButton* m_btnDot = nullptr;
 };
 #endif // MAINWINDOW_H
