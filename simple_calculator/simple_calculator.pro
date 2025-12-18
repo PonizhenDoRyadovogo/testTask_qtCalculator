@@ -10,6 +10,7 @@ SOURCES += \
 
 HEADERS += \
     headers/CalculatorModel.h \
+    headers/IView.h \
     headers/MainWindow.h
 
 DESTDIR     = $$OUT_PWD/bin
