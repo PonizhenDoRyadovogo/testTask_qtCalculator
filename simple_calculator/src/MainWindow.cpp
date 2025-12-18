@@ -89,7 +89,20 @@ void MainWindow::buildUi() {
 }
 
 void MainWindow::connectSignals() {
+    for(int i = 0; i < 10; ++i) {
+        connect(m_digitsBtns[i], &QPushButton::clicked, this, [this, i] {emit digitPressed(i);});
+    }
 
+    connect(m_btnCE, &QPushButton::clicked, this, &MainWindow::clearPressed);
+    connect(m_btnPM, &QPushButton::clicked, this, &MainWindow::toggleSignPressed);
+    connect(m_btnPercent, &QPushButton::clicked, this, &MainWindow::percentPressed);
+    connect(m_btnDot, &QPushButton::clicked, this, &MainWindow::dotPressed);
+    connect(m_btnEqual, &QPushButton::clicked, this, &MainWindow::equalsPressed);
+
+    connect(m_btnDiv, &QPushButton::clicked, this, [this]{emit operandPressed(Operand::Div);});
+    connect(m_btnMul, &QPushButton::clicked, this, [this]{emit operandPressed(Operand::Mul);});
+    connect(m_btnSub, &QPushButton::clicked, this, [this]{emit operandPressed(Operand::Sub);});
+    connect(m_btnAdd, &QPushButton::clicked, this, [this]{emit operandPressed(Operand::Add);});
 }
 
 
