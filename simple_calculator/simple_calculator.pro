@@ -5,11 +5,13 @@ CONFIG += c++17
 INCLUDEPATH += $$PWD/headers
 
 SOURCES += \
+    src/CalculatorPresenter.cpp \
     src/main.cpp \
     src/MainWindow.cpp
 
 HEADERS += \
     headers/CalculatorModel.h \
+    headers/CalculatorPresenter.h \
     headers/IView.h \
     headers/MainWindow.h
 
