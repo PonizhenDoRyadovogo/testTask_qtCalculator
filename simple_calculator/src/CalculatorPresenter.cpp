@@ -175,6 +175,17 @@ void CalculatorPresenter::onToggleSign() {
         return;
     }
 
+    if(m_enteredEqual) {
+        double cur = getDisplayNumber();
+        cur *= -1;
+        m_lastNumber = QString::number(cur);
+        m_view->setExpressionText(QString::number(cur));
+        m_view->setDisplayText("0");
+        m_enteredEqual = false;
+        m_enteringNow = true;
+        return;
+    }
+
     QString expr = m_view->getExpressionText();
     if(expr.isEmpty() || expr == "-"){
         return;
