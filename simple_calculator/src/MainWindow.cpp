@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     applyColors();
 
-    setWindowTitle("Calculator");
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
     setFixedSize(320, 420);
 }
 
@@ -44,6 +44,12 @@ QString MainWindow::getExpressionText() const {
 QPushButton* MainWindow::makeButton(const QString& btnName){
     QPushButton* b = new QPushButton(btnName, this);
     b->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    b->setFlat(true);
+    b->setFocusPolicy(Qt::NoFocus);
+    QFont btnFont = b->font();
+    btnFont.setPointSize(18);
+    btnFont.setWeight(QFont::Bold);
+    b->setFont(btnFont);
     return b;
 }
 
@@ -53,31 +59,36 @@ void MainWindow::buildUi() {
     root->setSpacing(8);
     root->setContentsMargins(12, 12, 12, 12);
 
-    m_display = new QLineEdit("0", this);
-    m_display->setReadOnly(true);
-    m_display->setMinimumHeight(54);
-    m_display->setAlignment(Qt::AlignRight);
-    m_display->setFrame(false);
-    QFont f = m_display->font();
-    f.setPointSize(18);
-    m_display->setFont(f);
-    root->addWidget(m_display, 0, 0, 1, 4);
-
     m_expr = new QLabel("", this);
     m_expr->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     m_expr->setMinimumHeight(22);
     QFont ef = m_expr->font();
-    ef.setPointSize(11);
+    ef.setPointSize(15);
+    ef.setWeight(QFont::Bold);
     m_expr->setFont(ef);
     auto* displayRow = new QWidget(this);
     auto* h = new QHBoxLayout(displayRow);
     h->setContentsMargins(0, 0, 0, 0);
     h->setSpacing(8);
 
-    m_equl = new QLabel("=", this);
+    m_display = new QLineEdit("0", displayRow);
+    m_display->setReadOnly(true);
+    m_display->setMinimumHeight(54);
+    m_display->setAlignment(Qt::AlignRight);
+    m_display->setFrame(false);
+    QFont f = m_display->font();
+    f.setPointSize(22);
+    f.setWeight(QFont::Bold);
+    m_display->setFont(f);
+
+    m_equl = new QLabel("=", displayRow);
     m_equl->setMinimumWidth(18);
+    QFont equalF = m_equl->font();
+    equalF.setPixelSize(22);
+    equalF.setWeight(QFont::Bold);
     m_equl->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     m_equl->setVisible(false);
+    m_equl->setFont(equalF);
 
     h->addWidget(m_equl);
     h->addWidget(m_display, 1);
@@ -154,20 +165,30 @@ void MainWindow::setButtonColors(QPushButton* b, const QColor& bg, const QColor&
 void MainWindow::applyColors() {
     {
         QPalette p = palette();
-        p.setColor(QPalette::Window, QColor(18, 18, 18));
-        p.setColor(QPalette::WindowText, QColor(240, 240, 240));
+        p.setColor(QPalette::Window, QColor(26, 27, 40));
+        p.setColor(QPalette::WindowText, QColor(255, 255, 255));
         setAutoFillBackground(true);
         setPalette(p);
     }
     {
         QPalette p = m_display->palette();
-        p.setColor(QPalette::Base, QColor(12, 12, 12));
-        p.setColor(QPalette::Text, QColor(240, 240, 240));
+        p.setColor(QPalette::Base, QColor(26, 27, 40));
+        p.setColor(QPalette::Text, QColor(255, 255, 255));
         m_display->setPalette(p);
     }
-    const QColor digitBg(30, 30, 30);
-    const QColor fg(240, 240, 240);
-    const QColor opBg(38, 38, 38);
+    {
+        QPalette p = m_equl->palette();
+        p.setColor(QPalette::WindowText, QColor(82, 201, 220));
+        m_equl->setPalette(p);
+    }
+    {
+        QPalette p = m_expr->palette();
+        p.setColor(QPalette::WindowText, QColor(255, 255, 255));
+        m_expr->setPalette(p);
+    }
+    const QColor digitBg(30, 36, 53);
+    const QColor fg(255, 255, 255);
+    const QColor opBg(82, 201, 220);
     for (auto* b : m_digitsBtns) {
         setButtonColors(b, digitBg, fg);
     }

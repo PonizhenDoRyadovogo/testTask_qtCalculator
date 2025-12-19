@@ -54,9 +54,9 @@ void CalculatorPresenter::onDigit(int d) {
     } else if(m_enteredEqual) {
         m_enteredEqual = false;
         m_lastNumber = t;
-        expr.clear();
         expr = t;
         m_view->setDisplayText("0");
+        m_view->setEqualsIndicatorVisible(false);
     } else {
         expr = expr + QString::number(d);
         m_lastNumber = m_enterdDot ? m_lastNumber + "." + t : m_lastNumber + t;
@@ -232,11 +232,13 @@ void CalculatorPresenter::onPercent() {
     if(m_enteredEqual) {
         double cur = getDisplayNumber();
         cur = cur / 100.0;
-        m_view->setDisplayText(0);
+        m_view->setDisplayText("0");
         m_view->setExpressionText(QString::number(cur));
         m_lastNumber = QString::number(cur);
+        m_view->setEqualsIndicatorVisible(false);
+        m_acc = cur;
+        m_enteringNow = false;
         m_enteredEqual = false;
-        m_enteringNow = true;
         return;
     }
 
