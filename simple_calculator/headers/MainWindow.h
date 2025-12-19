@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QVector>
+#include <QLabel>
 
 #include "IView.h"
 #include "CalculatorModel.h"
@@ -20,6 +21,9 @@ public:
     void setDisplayText(const QString& text) override;
     QString getDisplayText() const override;
     void showError(const QString& errorMessage) override;
+    virtual void setExpressionText(const QString& text) override;
+    virtual void setEqualsIndicatorVisible(bool visible) override;
+    virtual QString getExpressionText() const override;
 
 signals:
     void digitPressed(int d);
@@ -49,5 +53,8 @@ private:
     QPushButton* m_btnAdd = nullptr;
 
     QPushButton* m_btnDot = nullptr;
+
+    QLabel* m_expr = nullptr;
+    QLabel* m_equl = nullptr; // = слева от вычисленного числа
 };
 #endif // MAINWINDOW_H
