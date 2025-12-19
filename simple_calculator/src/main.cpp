@@ -4,10 +4,12 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QStyleFactory>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setStyle(QStyleFactory::create("Fusion"));
     MainWindow w;
     CalculatorPresenter presenter(&w);
 

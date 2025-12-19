@@ -37,6 +37,8 @@ private:
     void buildUi();
     void connectSignals();
     QPushButton* makeButton(const QString& btnName);
+    void setButtonColors(QPushButton* b, const QColor& bg, const QColor& fg);
+    void applyColors();
 private:
     QLineEdit* m_display = nullptr;
 

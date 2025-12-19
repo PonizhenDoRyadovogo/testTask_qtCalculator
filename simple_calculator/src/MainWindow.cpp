@@ -2,12 +2,16 @@
 
 #include <QMessageBox>
 #include <QGridLayout>
+#include <QPalette>
+#include <QColor>
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
 {
     buildUi();
     connectSignals();
+
+    applyColors();
 
     setWindowTitle("Calculator");
     setFixedSize(320, 420);
@@ -138,4 +142,43 @@ void MainWindow::connectSignals() {
     connect(m_btnAdd, &QPushButton::clicked, this, [this]{emit operandPressed(Operand::Add);});
 }
 
+void MainWindow::setButtonColors(QPushButton* b, const QColor& bg, const QColor& fg) {
+    QPalette p = b->palette();
+    p.setColor(QPalette::Button, bg);
+    p.setColor(QPalette::ButtonText, fg);
+    b->setAutoFillBackground(true);
+    b->setPalette(p);
+    b->update();
+}
 
+void MainWindow::applyColors() {
+    {
+        QPalette p = palette();
+        p.setColor(QPalette::Window, QColor(18, 18, 18));
+        p.setColor(QPalette::WindowText, QColor(240, 240, 240));
+        setAutoFillBackground(true);
+        setPalette(p);
+    }
+    {
+        QPalette p = m_display->palette();
+        p.setColor(QPalette::Base, QColor(12, 12, 12));
+        p.setColor(QPalette::Text, QColor(240, 240, 240));
+        m_display->setPalette(p);
+    }
+    const QColor digitBg(30, 30, 30);
+    const QColor fg(240, 240, 240);
+    const QColor opBg(38, 38, 38);
+    for (auto* b : m_digitsBtns) {
+        setButtonColors(b, digitBg, fg);
+    }
+
+    setButtonColors(m_btnAdd, opBg, fg);
+    setButtonColors(m_btnCE, opBg, fg);
+    setButtonColors(m_btnDiv, opBg, fg);
+    setButtonColors(m_btnDot, opBg, fg);
+    setButtonColors(m_btnEqual, opBg, fg);
+    setButtonColors(m_btnMul, opBg, fg);
+    setButtonColors(m_btnPM, opBg, fg);
+    setButtonColors(m_btnPercent, opBg, fg);
+    setButtonColors(m_btnSub, opBg, fg);
+}
