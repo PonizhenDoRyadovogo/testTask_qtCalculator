@@ -4,6 +4,7 @@
 #include <QGridLayout>
 #include <QPalette>
 #include <QColor>
+#include <QToolButton>
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent)
@@ -41,8 +42,8 @@ QString MainWindow::getExpressionText() const {
     return m_expr->text();
 }
 
-QPushButton* MainWindow::makeButton(const QString& btnName){
-    QPushButton* b = new QPushButton(btnName, this);
+QPushButton* MainWindow::makeButton(const QString& btnName, QWidget* parent){
+    QPushButton* b = new QPushButton(btnName, parent);
     b->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     b->setFlat(true);
     b->setFocusPolicy(Qt::NoFocus);
@@ -54,19 +55,45 @@ QPushButton* MainWindow::makeButton(const QString& btnName){
 }
 
 void MainWindow::buildUi() {
-    QGridLayout* root = new QGridLayout(this);
+    QVBoxLayout* outer = new QVBoxLayout(this);
+    outer->setContentsMargins(0,0,0,0);
+    outer->setSpacing(0);
+
+    QWidget* titleBar = new QWidget(this);
+    titleBar->setFixedHeight(36);
+
+    QHBoxLayout* th = new QHBoxLayout(titleBar);
+    th->setContentsMargins(12, 6, 12, 6);
+    th->setSpacing(8);
+
+    QToolButton* btnMin = new QToolButton(titleBar);
+    QToolButton* btnClose = new QToolButton(titleBar);
+
+    btnMin->setText("—");
+    btnClose->setText("×");
+    btnMin->setAutoRaise(true);
+    btnClose->setAutoRaise(true);
+
+    th->addStretch(1);
+    th->addWidget(btnMin);
+    th->addWidget(btnClose);
+
+    outer->addWidget(titleBar);
+
+    QWidget* content = new QWidget(this);
+    QGridLayout* root = new QGridLayout(content);
 
     root->setSpacing(8);
     root->setContentsMargins(12, 12, 12, 12);
 
-    m_expr = new QLabel("", this);
+    m_expr = new QLabel("", content);
     m_expr->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     m_expr->setMinimumHeight(22);
     QFont ef = m_expr->font();
     ef.setPointSize(15);
     ef.setWeight(QFont::Bold);
     m_expr->setFont(ef);
-    auto* displayRow = new QWidget(this);
+    auto* displayRow = new QWidget(content);
     auto* h = new QHBoxLayout(displayRow);
     h->setContentsMargins(0, 0, 0, 0);
     h->setSpacing(8);
@@ -96,13 +123,13 @@ void MainWindow::buildUi() {
     root->addWidget(m_expr,      1, 0, 1, 4);
     root->addWidget(displayRow,  0, 0, 1, 4);
 
-    m_btnCE = makeButton("CE");
-    m_btnPM = makeButton("+/-");
-    m_btnPercent = makeButton("%");
-    m_btnDiv = makeButton("/");
-    m_btnMul = makeButton("*");
-    m_btnSub = makeButton("-");
-    m_btnAdd = makeButton("+");
+    m_btnCE = makeButton("CE", content);
+    m_btnPM = makeButton("+/-", content);
+    m_btnPercent = makeButton("%", content);
+    m_btnDiv = makeButton("/", content);
+    m_btnMul = makeButton("*", content);
+    m_btnSub = makeButton("-", content);
+    m_btnAdd = makeButton("+", content);
 
     root->addWidget(m_btnCE, 2, 0);
     root->addWidget(m_btnPM, 2, 1);
@@ -114,7 +141,7 @@ void MainWindow::buildUi() {
 
     m_digitsBtns.resize(10);
     for(int i = 0; i < 10; ++i) {
-        m_digitsBtns[i] = makeButton(QString::number(i));
+        m_digitsBtns[i] = makeButton(QString::number(i), content);
     }
 
     root->addWidget(m_digitsBtns[7], 3, 0);
@@ -129,11 +156,16 @@ void MainWindow::buildUi() {
     root->addWidget(m_digitsBtns[2], 5, 1);
     root->addWidget(m_digitsBtns[3], 5, 2);
 
-    m_btnDot = makeButton(".");
-    m_btnEqual = makeButton("=");
+    m_btnDot = makeButton(".", content);
+    m_btnEqual = makeButton("=", content);
     root->addWidget(m_digitsBtns[0], 6, 0);
     root->addWidget(m_btnDot, 6, 1);
     root->addWidget(m_btnEqual, 6, 2);
+
+    outer->addWidget(content, 1);
+
+    connect(btnMin, &QToolButton::clicked, this, &QWidget::showMinimized);
+    connect(btnClose, &QToolButton::clicked, this, &QWidget::close);
 }
 
 void MainWindow::connectSignals() {

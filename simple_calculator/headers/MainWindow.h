@@ -36,7 +36,7 @@ signals:
 private:
     void buildUi();
     void connectSignals();
-    QPushButton* makeButton(const QString& btnName);
+    QPushButton* makeButton(const QString& btnName, QWidget* parent);
     void setButtonColors(QPushButton* b, const QColor& bg, const QColor& fg);
     void applyColors();
 private:
