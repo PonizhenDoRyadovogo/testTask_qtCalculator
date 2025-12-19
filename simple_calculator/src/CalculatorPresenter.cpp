@@ -39,6 +39,14 @@ QString CalculatorPresenter::operandSym(Operand op) const{
     }
 }
 
+bool CalculatorPresenter::isOperand(const QString str) const {
+    if(str == "+" || str == "-" || str == "/" || str == "x") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 void CalculatorPresenter::onDigit(int d) {
     QString expr = m_view->getExpressionText();
     int size = expr.size();
@@ -67,6 +75,10 @@ void CalculatorPresenter::onDigit(int d) {
 
 void CalculatorPresenter::onDot() {
     QString t = m_view->getExpressionText();
+
+    if(isOperand(t.right(1)) || m_enteredEqual) {
+        return;
+    }
 
     if(m_enteringNow || isError()) {
         m_view->setExpressionText("0.");
@@ -98,7 +110,7 @@ void CalculatorPresenter::onOperand(Operand op) {
 
 
     QString last = t.right(1);
-    if(last == "+" || last == "-" || last == "x" || last == "/") {
+    if(isOperand(last)) {
         t.chop(1);
         t += operandSym(op);
         m_view->setExpressionText(t);
@@ -175,12 +187,17 @@ void CalculatorPresenter::onToggleSign() {
         return;
     }
 
+    if(isOperand(m_view->getExpressionText().right(1))) {
+        return;
+    }
+
     if(m_enteredEqual) {
         double cur = getDisplayNumber();
         cur *= -1;
         m_lastNumber = QString::number(cur);
         m_view->setExpressionText(QString::number(cur));
         m_view->setDisplayText("0");
+        m_view->setEqualsIndicatorVisible(false);
         m_enteredEqual = false;
         m_enteringNow = true;
         return;
@@ -224,8 +241,9 @@ void CalculatorPresenter::onPercent() {
     if(isError()) {
         return;
     }
-
-    if(m_view->getExpressionText() == "" || m_view->getExpressionText() == "-" || m_lastNumber == "") {
+    QString t = m_view->getExpressionText();
+    if(t == "" || t == "-" || m_lastNumber == "" ||
+        isOperand(t.right(1))) {
         return;
     }
 
@@ -242,7 +260,6 @@ void CalculatorPresenter::onPercent() {
         return;
     }
 
-    QString t = m_view->getExpressionText();
     t.remove(t.length() - m_lastNumber.length(), m_lastNumber.length());
 
     bool ok = false;

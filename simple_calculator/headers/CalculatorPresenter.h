@@ -24,6 +24,7 @@ private:
     void setErrorState(const QString& errorMessage);
     bool isError() const;
     QString operandSym(Operand op) const;
+    bool isOperand(const QString str) const;
 private:
     IView* m_view = nullptr;
 
