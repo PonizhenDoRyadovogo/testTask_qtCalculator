@@ -218,6 +218,17 @@ void CalculatorPresenter::onPercent() {
         return;
     }
 
+    if(m_enteredEqual) {
+        double cur = getDisplayNumber();
+        cur = cur / 100.0;
+        m_view->setDisplayText(0);
+        m_view->setExpressionText(QString::number(cur));
+        m_lastNumber = QString::number(cur);
+        m_enteredEqual = false;
+        m_enteringNow = true;
+        return;
+    }
+
     QString t = m_view->getExpressionText();
     t.remove(t.length() - m_lastNumber.length(), m_lastNumber.length());
 
