@@ -82,10 +82,11 @@ void CalculatorPresenter::onDot() {
 void CalculatorPresenter::onOperand(Operand op) {
     if(isError()) return;
 
-    if(m_view->getExpressionText() == "" && op == Operand::Sub) {
+    QString t = m_view->getExpressionText();
+    if(t.isEmpty() && op == Operand::Sub) {
         m_view->setExpressionText("-");
         return;
-    } else if(m_view->getExpressionText() == ""){
+    } else if(t.isEmpty()){
         return;
     }
 
@@ -95,9 +96,15 @@ void CalculatorPresenter::onOperand(Operand op) {
         m_enteredEqual = false;
     }
 
-    QString t = m_view->getExpressionText();
+
     QString last = t.right(1);
     if(last == "+" || last == "-" || last == "x" || last == "/") {
+        t.chop(1);
+        t += operandSym(op);
+        m_view->setExpressionText(t);
+
+        m_pending = op;
+        m_enteringNow = true;
         return;
     }
 
@@ -167,18 +174,39 @@ void CalculatorPresenter::onToggleSign() {
     if(isError()) {
         return;
     }
-    //QString t = m_view->getDisplayText();
 
-    if(m_lastNumber == "0" || m_lastNumber == "0." || m_lastNumber.isEmpty()) {
+    QString expr = m_view->getExpressionText();
+    if(expr.isEmpty() || expr == "-"){
+        return;
+    }
+    if(m_lastNumber.isEmpty() || m_lastNumber == "0" || m_lastNumber == "0.") {
         return;
     }
 
-    if(m_lastNumber.startsWith("-")) {
-        m_lastNumber.remove(0, 1);
-    } else {
-        m_lastNumber.prepend("-");
+    int numStart = expr.length() - m_lastNumber.length();
+    int i = numStart - 1;
+    while (i >= 0 && expr[i].isSpace()) {
+        --i;
     }
-    //m_view->setDisplayText(t);
+    const QChar prev = (i >= 0) ? expr[i] : QChar();
+
+    const QString absNum = m_lastNumber.startsWith('-') ? m_lastNumber.mid(1) : m_lastNumber;
+    if (prev == '+' || prev == '-') {
+        expr[i] = (prev == '+') ? '-' : '+';
+
+        if (m_lastNumber.startsWith('-')) {
+            expr.replace(numStart, m_lastNumber.length(), absNum);
+            m_lastNumber = absNum;
+        } else {
+            m_lastNumber = absNum;
+        }
+    } else {
+        const QString newNum = m_lastNumber.startsWith('-') ? absNum : ("-" + absNum);
+        expr.replace(numStart, m_lastNumber.length(), newNum);
+        m_lastNumber = newNum;
+    }
+    m_view->setExpressionText(expr);
+    m_enteringNow = false;
 }
 
 void CalculatorPresenter::onPercent() {
